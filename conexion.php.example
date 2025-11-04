@@ -1,0 +1,18 @@
+<?php
+// Archivo de configuración de conexión a la base de datos
+// Copia este archivo como 'conexion.php' y configura tus credenciales
+
+$host = 'localhost:3307';
+$usuario = 'root';
+$contrasena = '';
+$base_de_datos = 'gestor_clientes_guiargo';
+
+$conexion = new mysqli($host, $usuario, $contrasena, $base_de_datos);
+
+if ($conexion->connect_error) {
+    die('Error de conexión: ' . $conexion->connect_error);
+}
+
+$conexion->set_charset('utf8');
+?>
+

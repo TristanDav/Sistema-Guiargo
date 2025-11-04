@@ -1,0 +1,205 @@
+/* 
+ * Sistema Guiargo - Estilos Corporativos
+ * Paleta de colores personalizada para la empresa
+ */
+
+/* Variables de colores corporativos */
+:root {
+    --color-primary: #0a3d62;        /* Azul corporativo principal */
+    --color-secondary: #1e5a8a;      /* Azul secundario */
+    --color-accent: #f39c12;         /* Naranja corporativo */
+    --color-success: #27ae60;        /* Verde para éxito */
+    --color-danger: #e74c3c;          /* Rojo para errores */
+    --color-warning: #f39c12;        /* Amarillo para advertencias */
+    --color-info: #3498db;           /* Azul para información */
+    --color-light: #ecf0f1;          /* Gris claro */
+    --color-dark: #2c3e50;          /* Gris oscuro */
+    --color-white: #ffffff;         /* Blanco */
+}
+
+/* Estilos para la barra de navegación */
+.navBar {
+    background-color: var(--color-primary) !important;
+}
+
+.navLateral {
+    background-color: var(--color-primary) !important;
+}
+
+.navLateral-body-logo {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-white) !important;
+}
+
+.navLateral-body-cr {
+    color: var(--color-white) !important;
+}
+
+/* Estilos para el menú principal */
+.menu-principal a {
+    color: var(--color-white) !important;
+}
+
+.menu-principal a:hover {
+    background-color: var(--color-secondary) !important;
+}
+
+/* Estilos para las tarjetas/tiles */
+.tile {
+    background-color: var(--color-white) !important;
+    border: 2px solid var(--color-primary) !important;
+    color: var(--color-primary) !important;
+}
+
+.tile:hover {
+    background-color: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+.tile-icon {
+    color: var(--color-primary) !important;
+}
+
+.tile:hover .tile-icon {
+    color: var(--color-white) !important;
+}
+
+/* Estilos para headers y wells */
+.header-well {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)) !important;
+    color: var(--color-white) !important;
+}
+
+.header-well-icon {
+    color: var(--color-accent) !important;
+}
+
+/* Estilos para botones */
+.mdl-button--colored {
+    background-color: var(--color-primary) !important;
+}
+
+.mdl-button--colored:hover {
+    background-color: var(--color-secondary) !important;
+}
+
+/* Estilos para paneles */
+.panel-tittle.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.panel-tittle.bg-success {
+    background-color: var(--color-success) !important;
+}
+
+/* Estilos para notificaciones */
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-success {
+    background-color: var(--color-success) !important;
+}
+
+.bg-danger {
+    background-color: var(--color-danger) !important;
+}
+
+.bg-info {
+    background-color: var(--color-info) !important;
+}
+
+.bg-warning {
+    background-color: var(--color-warning) !important;
+}
+
+/* Estilos para campos de formulario */
+.mdl-textfield__label {
+    color: var(--color-primary) !important;
+}
+
+.mdl-textfield.is-focused .mdl-textfield__label {
+    color: var(--color-primary) !important;
+}
+
+.mdl-textfield__error {
+    color: var(--color-danger) !important;
+}
+
+/* Estilos para tabs */
+.mdl-tabs__tab.is-active {
+    color: var(--color-primary) !important;
+}
+
+.mdl-tabs__tab:hover {
+    color: var(--color-secondary) !important;
+}
+
+/* Estilos para listas */
+.mdl-list__item:hover {
+    background-color: var(--color-light) !important;
+}
+
+/* Estilos para tablas */
+.mdl-data-table th {
+    background-color: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+.mdl-data-table tr:hover {
+    background-color: var(--color-light) !important;
+}
+
+/* Estilos para tooltips */
+.mdl-tooltip {
+    background-color: var(--color-dark) !important;
+    color: var(--color-white) !important;
+}
+
+/* Estilos para iconos */
+.zmdi {
+    color: var(--color-primary) !important;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .tile {
+        margin-bottom: 10px;
+    }
+    
+    .navLateral {
+        background-color: var(--color-primary) !important;
+    }
+}
+
+/* Estilos para animaciones */
+.tile {
+    transition: all 0.3s ease;
+}
+
+.mdl-button {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para estados de carga */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Estilos para mensajes de estado */
+.status-success {
+    color: var(--color-success) !important;
+}
+
+.status-error {
+    color: var(--color-danger) !important;
+}
+
+.status-warning {
+    color: var(--color-warning) !important;
+}
+
+.status-info {
+    color: var(--color-info) !important;
+}

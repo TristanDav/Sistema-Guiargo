@@ -1,0 +1,64 @@
+# Archivos de configuración sensibles
+conexion.php
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Archivos temporales
+*.tmp
+*.log
+*.cache
+*.bak
+*.backup
+*.old
+
+# Archivos de sesión
+sessions/
+*.sess
+
+# Archivos de uploads temporales
+uploads/temp/
+tmp/
+
+# Archivos de error
+error_log
+php_errors.log
+
+# Archivos de configuración local
+config.local.php
+.env
+.env.local
+
+# Archivos de base de datos (backups locales)
+*.sql.backup
+*.sql.gz
+
+# Archivos de composer
+vendor/
+composer.lock
+
+# Archivos de node_modules (si se usan)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Archivos de compilación
+dist/
+build/
+
+# Archivos de cache
+cache/
+*.cache
+
