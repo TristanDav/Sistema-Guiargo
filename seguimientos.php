@@ -404,816 +404,101 @@ function getTipoEntidadClass($tipo) {
     <script src="js/sweetalert2.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="js/main.js"></script>
-    <style>
-        :root {
-            --primary-color: #0b1786;
-            --secondary-color: #0b1786;
-            --accent-color: #f39c12;
-            --text-color: #333;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --border-color: #e9ecef;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1a237e 100%);
-            color: white;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .sidebar-logo i {
-            font-size: 2rem;
-            color: var(--accent-color);
-        }
-
-        .sidebar-logo h2 {
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-left-color: var(--accent-color);
-            color: white;
-        }
-
-        .nav-item.active {
-            background-color: rgba(255,255,255,0.15);
-            border-left-color: var(--accent-color);
-        }
-
-        .nav-item i {
-            margin-right: 0.75rem;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            background-color: var(--bg-color);
-        }
-
-        /* Top Navbar */
-        .top-navbar {
-            background: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        .page-title {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .page-title i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .page-title h1 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .navbar-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .view-toggle {
-            display: flex;
-            background: var(--bg-color);
-            border-radius: 25px;
-            padding: 0.25rem;
-        }
-
-        .view-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            color: var(--text-color);
-            cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            font-size: 0.875rem;
-        }
-
-        .view-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--text-color);
-        }
-
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .logout-btn {
-            color: var(--danger-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        /* Content Area */
-        .content {
-            padding: 2rem;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert i {
-            font-size: 1.25rem;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0a1468;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        /* Cards View */
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .seguimiento-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .seguimiento-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .entidad-name {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-color);
-            margin: 0;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-        }
-
-        .card-info {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-color);
-            font-size: 0.875rem;
-        }
-
-        .info-item i {
-            color: var(--primary-color);
-            width: 16px;
-        }
-
-        .descripcion-text {
-            margin-top: 0.5rem;
-            padding: 0.75rem;
-            background: var(--bg-color);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            color: var(--text-color);
-        }
-
-        /* Table View */
-        .table-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th {
-            background: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .table tr:hover {
-            background: var(--bg-color);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-
-        .close {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .close:hover {
-            opacity: 0.7;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(11, 23, 134, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        /* Search and Filters */
-        .search-filters-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 1px solid var(--border-color);
-        }
-
-        .search-filters-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .search-section {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-            flex: 1;
-            max-width: 500px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            color: var(--primary-color);
-            font-size: 1.25rem;
-            z-index: 2;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 3rem;
-            border: 2px solid var(--border-color);
-            border-radius: 25px;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            background: var(--bg-color);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(11, 23, 134, 0.1);
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 0.5rem;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
-
-        .search-btn:hover {
-            background: #0a1468;
-            transform: scale(1.05);
-        }
-
-        .filters-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .filter-group label {
-            font-weight: 500;
-            color: var(--text-color);
-            font-size: 0.875rem;
-        }
-
-        .filter-select,
-        .filter-input {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            transition: border-color 0.3s ease;
-            background: white;
-        }
-
-        .filter-select:focus,
-        .filter-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(11, 23, 134, 0.1);
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 0.75rem;
-            align-items: end;
-        }
-
-        /* Results counter */
-        .results-info {
-            background: var(--bg-color);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            color: var(--text-color);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .results-info i {
-            color: var(--primary-color);
-            margin-right: 0.5rem;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid transparent;
-        }
-
-        .status-pendiente {
-            background: #fff3e0;
-            color: #f57c00;
-            border-color: #ffcc02;
-        }
-
-        .status-cumplido {
-            background: #e8f5e8;
-            color: #388e3c;
-            border-color: #c8e6c9;
-        }
-
-        .status-vencido {
-            background: #ffebee;
-            color: #d32f2f;
-            border-color: #ffcdd2;
-        }
-
-        .status-cliente {
-            background: #e3f2fd;
-            color: #1976d2;
-            border-color: #bbdefb;
-        }
-
-        .status-empresa {
-            background: #f3e5f5;
-            color: #7b1fa2;
-            border-color: #ce93d8;
-        }
-
-        /* Contador de notificaciones */
-        .notification-badge.prioritaria {
-            background: var(--danger-color);
-            color: white;
-            border-radius: 50%;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        /* Hidden classes */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .content {
-                padding: 1rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            .search-filters-container {
-                padding: 1rem;
-            }
-
-            .filters-section {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-input-group {
-                max-width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/seguimientos.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="zmdi zmdi-calendar-check"></i>
-                    <h2>Seguimientos</h2>
+    <!-- Navbar Superior -->
+    <nav class="top-navbar">
+        <div class="company-logo">
+            <!-- Logo de la Empresa -->
+            <img src="assets/img/Logo-guiargo.png" alt="Logo Grupo Guiargo" class="logo-image">
+            
+            <!-- Texto del Logo -->
+            <div class="logo-text">
+                <div class="logo-main-text">
+                    <span class="logo-grupo">GRUPO</span> <span class="logo-guiargo">GUIARGO</span>
                 </div>
+                <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
-            <div class="sidebar-nav">
-                <a href="home_guiargo.php" class="nav-item">
-                    <i class="zmdi zmdi-home"></i>
+        </div>
+        <div class="navbar-user">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="toggleView('cards')">
+                    <i class="zmdi zmdi-view-module"></i> Cards
+                </button>
+                <button class="view-btn" onclick="toggleView('table')">
+                    <i class="zmdi zmdi-view-list"></i> Tabla
+                </button>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                </div>
+                <span><?php echo $_SESSION['username']; ?></span>
+                <?php if ($contador_prioritarias > 0): ?>
+                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                <?php endif; ?>
+            </div>
+            <a href="logout.php" class="logout-btn">
+                <i class="zmdi zmdi-power"></i>
+                Cerrar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Panel de Control</h3>
+            <p>Bienvenido, <?php echo $_SESSION['username']; ?></p>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <!-- Dashboard -->
+            <div class="menu-section">
+                <div class="menu-section-title">Principal</div>
+                <a href="home_guiargo.php" class="menu-item">
+                    <i class="zmdi zmdi-view-dashboard"></i>
                     Dashboard
                 </a>
-                <a href="seguimientos.php" class="nav-item active">
-                    <i class="zmdi zmdi-calendar-check"></i>
-                    Seguimientos
-                </a>
-                <a href="usuarios.php" class="nav-item">
-                    <i class="zmdi zmdi-account-circle"></i>
-                    Usuarios
-                </a>
-                <a href="clientes.php" class="nav-item">
-                    <i class="zmdi zmdi-accounts"></i>
-                    Clientes
-                </a>
-                <a href="empresas.php" class="nav-item">
+            </div>
+
+            <!-- Administración -->
+            <div class="menu-section">
+                <div class="menu-section-title">Administración</div>
+                <a href="empresas.php" class="menu-item">
                     <i class="zmdi zmdi-city-alt"></i>
                     Empresas
                 </a>
-                <a href="notificaciones.php" class="nav-item">
+                <a href="clientes.php" class="menu-item">
+                    <i class="zmdi zmdi-accounts"></i>
+                    Clientes
+                </a>
+                <a href="notificaciones.php" class="menu-item">
                     <i class="zmdi zmdi-notifications"></i>
                     Notificaciones
                 </a>
+                <a href="seguimientos.php" class="menu-item">
+                    <i class="zmdi zmdi-calendar-check"></i>
+                    Seguimientos
+                </a>
+            </div>
+
+            <!-- Usuarios -->
+            <div class="menu-section">
+                <div class="menu-section-title">Usuarios</div>
+                <a href="usuarios.php" class="menu-item">
+                    <i class="zmdi zmdi-account-circle"></i>
+                    Usuarios
+                </a>
             </div>
         </nav>
+    </aside>
 
-        
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Navbar -->
-            <nav class="top-navbar">
-                <div class="page-title">
-                    <i class="zmdi zmdi-calendar-check"></i>
-                    <h1>Gestión de Seguimientos</h1>
-                </div>
-                <div class="navbar-actions">
-                    <div class="view-toggle">
-                        <button class="view-btn active" onclick="toggleView('cards')">
-                            <i class="zmdi zmdi-view-module"></i> Cards
-                        </button>
-                        <button class="view-btn" onclick="toggleView('table')">
-                            <i class="zmdi zmdi-view-list"></i> Tabla
-                        </button>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
-                        </div>
-                        <span><?php echo $_SESSION['username']; ?></span>
-                        <?php if ($contador_prioritarias > 0): ?>
-                            <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                        <?php endif; ?>
-                    </div>
-                    <a href="logout.php" class="logout-btn">
-                        <i class="zmdi zmdi-power"></i> Cerrar Sesión
-                    </a>
-                </div>
-            </nav>
-
-            <!-- Content -->
-            <div class="content">
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        <!-- Content -->
+        <div class="content">
                 <?php if (!empty($mensaje)): ?>
                     <div class="alert <?php echo $tipo_mensaje; ?>">
                         <i class="zmdi zmdi-<?php echo $tipo_mensaje == 'success' ? 'check-circle' : 'alert-circle'; ?>"></i>
