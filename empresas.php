@@ -2,6 +2,7 @@
 // Incluir archivo de conexión a la base de datos
 require_once 'conexion.php';
 require_once 'funciones_notificaciones.php';
+require_once 'funciones_roles.php';
 
 // Iniciar sesión
 session_start();
@@ -116,6 +117,11 @@ function actualizarEmpresa($conexion, $id, $data) {
 
 // Función para eliminar empresa
 function eliminarEmpresa($conexion, $id) {
+    // Verificar que el usuario sea administrador
+    if (!puedeEliminar()) {
+        return false;
+    }
+    
     $query = "DELETE FROM empresas WHERE id = ?";
     $stmt = $conexion->prepare($query);
     $stmt->bind_param('i', $id);
@@ -174,6 +180,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
                 
             case 'delete':
+                // Verificar permisos antes de eliminar
+                if (!puedeEliminar()) {
+                    $_SESSION['error'] = 'No tienes permisos para eliminar registros';
+                    break;
+                }
+                
                 $id = $_POST['id'];
                 if (eliminarEmpresa($conexion, $id)) {
                     $_SESSION['success'] = 'Empresa eliminada exitosamente';
@@ -220,9 +232,13 @@ $empresas = getEmpresas($conexion, $search, $filters);
     <script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
     <script src="js/material.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/mobile-menu.js"></script>
     <link rel="stylesheet" href="css/empresas.css">
 </head>
 <body>
+    <!-- Overlay para sidebar móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Navbar Superior -->
     <nav class="top-navbar">
         <div class="company-logo">
@@ -237,20 +253,25 @@ $empresas = getEmpresas($conexion, $search, $filters);
                 <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
         </div>
-        <div class="navbar-user">
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle" title="Menú">
+                <i class="zmdi zmdi-menu"></i>
+            </button>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                    </div>
+                    <span><?php echo $_SESSION['username']; ?></span>
+                    <?php if ($contador_prioritarias > 0): ?>
+                        <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                    <?php endif; ?>
                 </div>
-                <span><?php echo $_SESSION['username']; ?></span>
-                <?php if ($contador_prioritarias > 0): ?>
-                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                <?php endif; ?>
+                <a href="logout.php" class="logout-btn">
+                    <i class="zmdi zmdi-power"></i>
+                    Cerrar Sesión
+                </a>
             </div>
-            <a href="logout.php" class="logout-btn">
-                <i class="zmdi zmdi-power"></i>
-                Cerrar Sesión
-            </a>
         </div>
     </nav>
 
@@ -293,6 +314,7 @@ $empresas = getEmpresas($conexion, $search, $filters);
             </div>
 
             <!-- Usuarios -->
+            <?php if (esAdministrador()): ?>
             <div class="menu-section">
                 <div class="menu-section-title">Usuarios</div>
                 <a href="usuarios.php" class="menu-item">
@@ -300,6 +322,7 @@ $empresas = getEmpresas($conexion, $search, $filters);
                     Usuarios
                 </a>
             </div>
+            <?php endif; ?>
         </nav>
     </aside>
 
@@ -442,10 +465,12 @@ $empresas = getEmpresas($conexion, $search, $filters);
                             <i class="zmdi zmdi-edit"></i>
                             Editar
                         </button>
+                        <?php if (puedeEliminar()): ?>
                         <button class="btn-action btn-delete" onclick="deleteEmpresa(<?php echo $empresa['id']; ?>, '<?php echo htmlspecialchars($empresa['nombre']); ?>')">
                             <i class="zmdi zmdi-delete"></i>
                             Eliminar
                         </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -493,9 +518,11 @@ $empresas = getEmpresas($conexion, $search, $filters);
                                         <button class="btn-action btn-edit" onclick="editEmpresa(<?php echo $empresa['id']; ?>)">
                                             <i class="zmdi zmdi-edit"></i>
                                         </button>
+                                        <?php if (puedeEliminar()): ?>
                                         <button class="btn-action btn-delete" onclick="deleteEmpresa(<?php echo $empresa['id']; ?>, '<?php echo htmlspecialchars($empresa['nombre']); ?>')">
                                             <i class="zmdi zmdi-delete"></i>
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

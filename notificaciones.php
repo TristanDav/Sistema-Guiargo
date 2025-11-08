@@ -1,6 +1,7 @@
 <?php
 // Incluir archivo de conexión a la base de datos
 require_once 'conexion.php';
+require_once 'funciones_roles.php';
 
 // Iniciar sesión
 session_start();
@@ -98,6 +99,11 @@ function marcarTodasComoLeidas($conexion, $usuario_id) {
 
 // Función para eliminar notificación
 function eliminarNotificacion($conexion, $id) {
+    // Verificar que el usuario sea administrador
+    if (!puedeEliminar()) {
+        return false;
+    }
+    
     $query = "DELETE FROM notificaciones WHERE id = ?";
     $stmt = $conexion->prepare($query);
     $stmt->bind_param('i', $id);
@@ -251,6 +257,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
                 
             case 'eliminar':
+                // Verificar permisos antes de eliminar
+                if (!puedeEliminar()) {
+                    $_SESSION['error'] = 'No tienes permisos para eliminar registros';
+                    break;
+                }
+                
                 $id = $_POST['id'];
                 if (eliminarNotificacion($conexion, $id)) {
                     $_SESSION['success'] = 'Notificación eliminada exitosamente';
@@ -359,9 +371,13 @@ $empresas = getEmpresas($conexion);
     <script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
     <script src="js/material.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/mobile-menu.js"></script>
     <link rel="stylesheet" href="css/notificaciones.css">
 </head>
 <body>
+    <!-- Overlay para sidebar móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Navbar Superior -->
     <nav class="top-navbar">
         <div class="company-logo">
@@ -376,20 +392,25 @@ $empresas = getEmpresas($conexion);
                 <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
         </div>
-        <div class="navbar-user">
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle" title="Menú">
+                <i class="zmdi zmdi-menu"></i>
+            </button>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                    </div>
+                    <span><?php echo $_SESSION['username']; ?></span>
+                    <?php if ($contador_prioritarias > 0): ?>
+                        <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                    <?php endif; ?>
                 </div>
-                <span><?php echo $_SESSION['username']; ?></span>
-                <?php if ($contador_prioritarias > 0): ?>
-                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                <?php endif; ?>
+                <a href="logout.php" class="logout-btn">
+                    <i class="zmdi zmdi-power"></i>
+                    Cerrar Sesión
+                </a>
             </div>
-            <a href="logout.php" class="logout-btn">
-                <i class="zmdi zmdi-power"></i>
-                Cerrar Sesión
-            </a>
         </div>
     </nav>
 
@@ -432,6 +453,7 @@ $empresas = getEmpresas($conexion);
             </div>
 
             <!-- Usuarios -->
+            <?php if (esAdministrador()): ?>
             <div class="menu-section">
                 <div class="menu-section-title">Usuarios</div>
                 <a href="usuarios.php" class="menu-item">
@@ -439,6 +461,7 @@ $empresas = getEmpresas($conexion);
                     Usuarios
                 </a>
             </div>
+            <?php endif; ?>
         </nav>
     </aside>
 
@@ -632,6 +655,7 @@ $empresas = getEmpresas($conexion);
                                     </span>
                                 <?php endif; ?>
                                 
+                                <?php if (puedeEliminar()): ?>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta notificación?')">
                                     <input type="hidden" name="action" value="eliminar">
                                     <input type="hidden" name="id" value="<?php echo $notificacion['id']; ?>">
@@ -640,6 +664,7 @@ $empresas = getEmpresas($conexion);
                                         Eliminar
                                     </button>
                                 </form>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

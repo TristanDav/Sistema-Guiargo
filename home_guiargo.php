@@ -2,6 +2,7 @@
 // Incluir archivo de conexión a la base de datos
 require_once 'conexion.php';
 require_once 'funciones_notificaciones.php';
+require_once 'funciones_roles.php';
 
 // Iniciar sesión
 session_start();
@@ -154,8 +155,12 @@ try {
     <script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
     <script src="js/material.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/mobile-menu.js"></script>
 </head>
 <body>
+    <!-- Overlay para sidebar móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Navbar Superior -->
     <nav class="top-navbar">
         <div class="company-logo">
@@ -170,20 +175,25 @@ try {
                 <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
         </div>
-        <div class="navbar-user">
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle" title="Menú">
+                <i class="zmdi zmdi-menu"></i>
+            </button>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                    </div>
+                    <span><?php echo $_SESSION['username']; ?></span>
+                    <?php if ($contador_prioritarias > 0): ?>
+                        <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                    <?php endif; ?>
                 </div>
-                <span><?php echo $_SESSION['username']; ?></span>
-                <?php if ($contador_prioritarias > 0): ?>
-                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                <?php endif; ?>
+                <a href="logout.php" class="logout-btn">
+                    <i class="zmdi zmdi-power"></i>
+                    Cerrar Sesión
+                </a>
             </div>
-            <a href="logout.php" class="logout-btn">
-                <i class="zmdi zmdi-power"></i>
-                Cerrar Sesión
-            </a>
         </div>
     </nav>
 
@@ -226,6 +236,7 @@ try {
             </div>
 
             <!-- Usuarios -->
+            <?php if (esAdministrador()): ?>
             <div class="menu-section">
                 <div class="menu-section-title">Usuarios</div>
                 <a href="usuarios.php" class="menu-item">
@@ -233,6 +244,7 @@ try {
                     Usuarios
                 </a>
             </div>
+            <?php endif; ?>
         </nav>
     </aside>
 
@@ -591,15 +603,7 @@ try {
             // Generar el calendario al cargar la página
             generateCalendar();
             
-            // Agregar funcionalidad de menú móvil si es necesario
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
-            
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('open');
-                });
-            }
+            // El menú móvil se maneja en mobile-menu.js
         });
     </script>
 </body>

@@ -2,6 +2,7 @@
 // Incluir archivo de conexión a la base de datos
 require_once 'conexion.php';
 require_once 'funciones_notificaciones.php';
+require_once 'funciones_roles.php';
 
 // Verificar que la conexión se estableció correctamente
 if (!isset($conexion) || $conexion->connect_error) {
@@ -207,6 +208,11 @@ function actualizarSeguimiento($conexion, $id, $datos) {
 
 // Función para eliminar un seguimiento
 function eliminarSeguimiento($conexion, $id) {
+    // Verificar que el usuario sea administrador
+    if (!puedeEliminar()) {
+        return false;
+    }
+    
     $stmt = $conexion->prepare("DELETE FROM seguimientos WHERE id = ?");
     if ($stmt) {
         $stmt->bind_param("i", $id);
@@ -314,6 +320,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
                 
             case 'eliminar':
+                // Verificar permisos antes de eliminar
+                if (!puedeEliminar()) {
+                    $_SESSION['mensaje'] = 'No tienes permisos para eliminar registros';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    break;
+                }
+                
                 $id = (int)$_POST['id'];
                 if (eliminarSeguimiento($conexion, $id)) {
                     $_SESSION['mensaje'] = 'Seguimiento eliminado exitosamente';
@@ -404,9 +417,13 @@ function getTipoEntidadClass($tipo) {
     <script src="js/sweetalert2.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/mobile-menu.js"></script>
     <link rel="stylesheet" href="css/seguimientos.css">
 </head>
 <body>
+    <!-- Overlay para sidebar móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Navbar Superior -->
     <nav class="top-navbar">
         <div class="company-logo">
@@ -421,28 +438,33 @@ function getTipoEntidadClass($tipo) {
                 <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
         </div>
-        <div class="navbar-user">
-            <div class="view-toggle">
-                <button class="view-btn active" onclick="toggleView('cards')">
-                    <i class="zmdi zmdi-view-module"></i> Cards
-                </button>
-                <button class="view-btn" onclick="toggleView('table')">
-                    <i class="zmdi zmdi-view-list"></i> Tabla
-                </button>
-            </div>
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle" title="Menú">
+                <i class="zmdi zmdi-menu"></i>
+            </button>
+            <div class="navbar-user">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="toggleView('cards')">
+                        <i class="zmdi zmdi-view-module"></i> Cards
+                    </button>
+                    <button class="view-btn" onclick="toggleView('table')">
+                        <i class="zmdi zmdi-view-list"></i> Tabla
+                    </button>
                 </div>
-                <span><?php echo $_SESSION['username']; ?></span>
-                <?php if ($contador_prioritarias > 0): ?>
-                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                <?php endif; ?>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                    </div>
+                    <span><?php echo $_SESSION['username']; ?></span>
+                    <?php if ($contador_prioritarias > 0): ?>
+                        <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                    <?php endif; ?>
+                </div>
+                <a href="logout.php" class="logout-btn">
+                    <i class="zmdi zmdi-power"></i>
+                    Cerrar Sesión
+                </a>
             </div>
-            <a href="logout.php" class="logout-btn">
-                <i class="zmdi zmdi-power"></i>
-                Cerrar Sesión
-            </a>
         </div>
     </nav>
 
@@ -485,6 +507,7 @@ function getTipoEntidadClass($tipo) {
             </div>
 
             <!-- Usuarios -->
+            <?php if (esAdministrador()): ?>
             <div class="menu-section">
                 <div class="menu-section-title">Usuarios</div>
                 <a href="usuarios.php" class="menu-item">
@@ -492,6 +515,7 @@ function getTipoEntidadClass($tipo) {
                     Usuarios
                 </a>
             </div>
+            <?php endif; ?>
         </nav>
     </aside>
 
@@ -639,9 +663,11 @@ function getTipoEntidadClass($tipo) {
                                         <button class="btn btn-primary btn-sm" onclick="openModal('editar', <?php echo $seguimiento['id']; ?>)">
                                             <i class="zmdi zmdi-edit"></i>
                                         </button>
+                                        <?php if (puedeEliminar()): ?>
                                         <button class="btn btn-danger btn-sm" onclick="eliminarSeguimiento(<?php echo $seguimiento['id']; ?>)">
                                             <i class="zmdi zmdi-delete"></i>
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="card-info">
@@ -723,9 +749,11 @@ function getTipoEntidadClass($tipo) {
                                             <button class="btn btn-primary btn-sm" onclick="openModal('editar', <?php echo $seguimiento['id']; ?>)">
                                                 <i class="zmdi zmdi-edit"></i> Editar
                                             </button>
+                                            <?php if (puedeEliminar()): ?>
                                             <button class="btn btn-danger btn-sm" onclick="eliminarSeguimiento(<?php echo $seguimiento['id']; ?>)">
                                                 <i class="zmdi zmdi-delete"></i> Eliminar
                                             </button>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

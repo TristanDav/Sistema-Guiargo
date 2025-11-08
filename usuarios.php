@@ -2,6 +2,7 @@
 // Incluir archivo de conexión a la base de datos
 require_once 'conexion.php';
 require_once 'funciones_notificaciones.php';
+require_once 'funciones_roles.php';
 
 // Verificar que la conexión se estableció correctamente
 if (!isset($conexion) || $conexion->connect_error) {
@@ -14,6 +15,14 @@ session_start();
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: index.php');
+    exit();
+}
+
+// Verificar que solo los administradores puedan acceder a esta página
+if (!esAdministrador()) {
+    $_SESSION['mensaje'] = 'No tienes permisos para acceder a esta sección';
+    $_SESSION['tipo_mensaje'] = 'error';
+    header('Location: home_guiargo.php');
     exit();
 }
 
@@ -142,6 +151,11 @@ function emailExiste($conexion, $email, $excluir_id = null) {
 
 // Función para insertar un nuevo usuario
 function insertarUsuario($conexion, $datos) {
+    // Verificar que el usuario sea administrador
+    if (!esAdministrador()) {
+        return ['success' => false, 'message' => 'No tienes permisos para crear usuarios'];
+    }
+    
     // Verificar si el username ya existe
     if (usernameExiste($conexion, $datos['username'])) {
         return ['success' => false, 'message' => 'El nombre de usuario ya existe'];
@@ -218,6 +232,11 @@ function actualizarUsuario($conexion, $id, $datos) {
 
 // Función para eliminar un usuario
 function eliminarUsuario($conexion, $id) {
+    // Verificar que el usuario sea administrador
+    if (!puedeEliminar()) {
+        return ['success' => false, 'message' => 'No tienes permisos para eliminar usuarios'];
+    }
+    
     // No permitir eliminar el usuario actual
     if ($id == $_SESSION['usuario_id']) {
         return ['success' => false, 'message' => 'No puedes eliminar tu propio usuario'];
@@ -248,6 +267,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         switch ($_POST['accion']) {
             case 'crear':
+                // Verificar permisos antes de crear usuario
+                if (!esAdministrador()) {
+                    $_SESSION['mensaje'] = 'No tienes permisos para crear usuarios';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    break;
+                }
+                
                 $datos = [
                     'username' => trim($_POST['username']),
                     'password' => trim($_POST['password']),
@@ -289,6 +315,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
                 
             case 'eliminar':
+                // Verificar permisos antes de eliminar
+                if (!puedeEliminar()) {
+                    $_SESSION['mensaje'] = 'No tienes permisos para eliminar registros';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    break;
+                }
+                
                 $id = (int)$_POST['id'];
                 $resultado = eliminarUsuario($conexion, $id);
                 $_SESSION['mensaje'] = $resultado['message'];
@@ -357,9 +390,13 @@ function getActivoClass($activo) {
     <script src="js/sweetalert2.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/mobile-menu.js"></script>
     <link rel="stylesheet" href="css/usuarios.css">
 </head>
 <body>
+    <!-- Overlay para sidebar móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Navbar Superior -->
     <nav class="top-navbar">
         <div class="company-logo">
@@ -374,28 +411,33 @@ function getActivoClass($activo) {
                 <div class="logo-tagline">CONSULTORÍA, CAPACITACIÓN Y CENTRO EVALUADOR</div>
             </div>
         </div>
-        <div class="navbar-user">
-            <div class="view-toggle">
-                <button class="view-btn active" onclick="toggleView('cards')">
-                    <i class="zmdi zmdi-view-module"></i> Cards
-                </button>
-                <button class="view-btn" onclick="toggleView('table')">
-                    <i class="zmdi zmdi-view-list"></i> Tabla
-                </button>
-            </div>
-            <div class="user-info">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+        <div class="navbar-right">
+            <button class="menu-toggle" id="menuToggle" title="Menú">
+                <i class="zmdi zmdi-menu"></i>
+            </button>
+            <div class="navbar-user">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="toggleView('cards')">
+                        <i class="zmdi zmdi-view-module"></i> Cards
+                    </button>
+                    <button class="view-btn" onclick="toggleView('table')">
+                        <i class="zmdi zmdi-view-list"></i> Tabla
+                    </button>
                 </div>
-                <span><?php echo $_SESSION['username']; ?></span>
-                <?php if ($contador_prioritarias > 0): ?>
-                    <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
-                <?php endif; ?>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($_SESSION['username'], 0, 1)); ?>
+                    </div>
+                    <span><?php echo $_SESSION['username']; ?></span>
+                    <?php if ($contador_prioritarias > 0): ?>
+                        <span class="notification-badge prioritaria"><?php echo $contador_prioritarias; ?></span>
+                    <?php endif; ?>
+                </div>
+                <a href="logout.php" class="logout-btn">
+                    <i class="zmdi zmdi-power"></i>
+                    Cerrar Sesión
+                </a>
             </div>
-            <a href="logout.php" class="logout-btn">
-                <i class="zmdi zmdi-power"></i>
-                Cerrar Sesión
-            </a>
         </div>
     </nav>
 
@@ -461,14 +503,18 @@ function getActivoClass($activo) {
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
+                    <?php if (esAdministrador()): ?>
                     <button class="btn btn-primary" onclick="openModal('crear')">
                         <i class="zmdi zmdi-plus"></i>
                         Nuevo Usuario
                     </button>
+                    <?php endif; ?>
+                    <?php if (puedeEliminar()): ?>
                     <button class="btn btn-danger" onclick="eliminarSeleccionados()">
                         <i class="zmdi zmdi-delete"></i>
                         Eliminar Seleccionados
                     </button>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Barra de Búsqueda y Filtros -->
@@ -585,9 +631,11 @@ function getActivoClass($activo) {
                                         <button class="btn btn-primary btn-sm" onclick="openModal('editar', <?php echo $usuario['id']; ?>)">
                                             <i class="zmdi zmdi-edit"></i>
                                         </button>
+                                        <?php if (puedeEliminar()): ?>
                                         <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
                                             <i class="zmdi zmdi-delete"></i>
                                         </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="card-info">
@@ -652,9 +700,11 @@ function getActivoClass($activo) {
                                             <button class="btn btn-primary btn-sm" onclick="openModal('editar', <?php echo $usuario['id']; ?>)">
                                                 <i class="zmdi zmdi-edit"></i> Editar
                                             </button>
+                                            <?php if (puedeEliminar()): ?>
                                             <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $usuario['id']; ?>)">
                                                 <i class="zmdi zmdi-delete"></i> Eliminar
                                             </button>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
